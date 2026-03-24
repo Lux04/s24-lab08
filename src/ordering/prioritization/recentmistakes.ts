@@ -3,22 +3,34 @@ import { CardOrganizer } from '../cardorganizer.js'
 
 function newRecentMistakesFirstSorter (): CardOrganizer {
   /**
-   * Computes the most recent mistake's time stamp for a card and helps in
-   * determining the sequence of cards in the next iteration, based on the
-   * rules that those answered incorrectly in the last round appear first.
+   * Checks whether the card was answered incorrectly in the last round.
    *
-   * @param cardStatus The {@link CardStatus} object with failing
-   * @return The most recent incorrect response time stamp
+   * @param cardStatus The {@link CardStatus} object
+   * @return true if the latest result is incorrect, otherwise false
    */
+  function hasRecentMistake (cardStatus: CardStatus): boolean {
+    const results = cardStatus.getResults()
+
+    if (results.length === 0) {
+      return false
+    }
+
+    return !results[results.length - 1]
+  }
+
   return {
     /**
-     * Orders the cards by the time of most recent incorrect answers provided for them.
+     * Orders the cards so that those answered incorrectly in the last round
+     * appear first, while preserving the original order inside each group.
      *
      * @param cards The {@link CardStatus} objects to order.
      * @return The ordered cards.
      */
     reorganize: function (cards: CardStatus[]): CardStatus[] {
-      return []
+      const recentMistakes = cards.filter(card => hasRecentMistake(card))
+      const others = cards.filter(card => !hasRecentMistake(card))
+
+      return [...recentMistakes, ...others]
     }
   }
 };

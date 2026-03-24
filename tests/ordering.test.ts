@@ -1,3 +1,4 @@
+import { describe, expect, test } from '@jest/globals'
 import { newMostMistakesFirstSorter } from '../src/ordering/prioritization/mostmistakes.js'
 import { newRecentMistakesFirstSorter } from '../src/ordering/prioritization/recentmistakes.js'
 import { CardStatus, newCardStatus } from '../src/cards/cardstatus.js'
@@ -74,4 +75,14 @@ describe('Test prioritization', () => {
     expect(cardsSorted[6]).toEqual(cardStatus7)
     expect(cardsSorted[7]).toEqual(cardStatus8)
   })
+  test('Test recentRecentMistakesFirstSorter with empty results', () => {
+  const emptyFlashCard = newFlashCard('Question9', 'Answer9')
+  const emptyCardStatus = newCardStatus(emptyFlashCard)
+
+  const cardsSorted: CardStatus[] =
+    createRecentMistakesFirstSorter().reorganize([emptyCardStatus, cardStatus1])
+
+  expect(cardsSorted[0]).toEqual(cardStatus1)
+  expect(cardsSorted[1]).toEqual(emptyCardStatus)
+})
 })
